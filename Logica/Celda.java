@@ -4,8 +4,12 @@ public class Celda {
 
 	private Integer valor;
 	private EntidadGrafica entidadGrafica;
+	private int fila, columna;
 	
+
+  
 	public Celda() {
+		
 		this.valor = null;
 		this.entidadGrafica = new EntidadGrafica();
 	}
@@ -19,6 +23,14 @@ public class Celda {
 		entidadGrafica.actualizar(this.valor);
 	}
 	
+	public void setFila(int fila) {
+		this.fila = fila;
+	}
+
+	public void setColumna(int columna) {
+		this.columna = columna;
+	}
+
 	public int getCantElementos() {
 		return this.entidadGrafica.getImagenes().length;
 	}
@@ -43,5 +55,13 @@ public class Celda {
 	
 	public void setGrafica(EntidadGrafica g) {
 		this.entidadGrafica = g;
+	}
+	
+	public int getFila() {
+		return fila;
+	}
+
+	public int getColumna() {
+		return columna;
 	}
 }

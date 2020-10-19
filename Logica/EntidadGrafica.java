@@ -18,6 +18,7 @@ public class EntidadGrafica {
 	public void actualizar(int indice) {
 		if (indice < this.imagenes.length) {
 			ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(this.imagenes[indice]));
+			
 			this.grafico.setImage(imageIcon.getImage());
 		}
 	}
@@ -34,7 +35,9 @@ public class EntidadGrafica {
 		return this.imagenes;
 	}
 	
+	/*
 	public void setImagenes(String[] imagenes) {
 		this.imagenes = imagenes;
 	}
+	*/
 }
