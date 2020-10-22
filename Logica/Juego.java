@@ -21,25 +21,19 @@ public class Juego {
         fila = 0;
         col = 0;
         cantLeidos = 0;
-        int i = 0;
         while (s.hasNextInt()) { //mientras queden enteros por leer
             numeroLeido = s.nextInt(); //se lee un entero del archivo
             cantLeidos++;
             c = new Celda();
             tablero[fila][col] = c;
         	c.setValor(numeroLeido);
-        	System.out.print(numeroLeido+" ");
-        	i++;
-        	if (i == 9)
-        	{
-        		System.out.println();
-        		i = 0;
-        	}
         	c.setFila(fila);
         	c.setColumna(col);
+        	c.setCuadrante(fila, col);
+        	System.out.println("cuadrante "+ c.getCuadrante());
         	contador++;
         	if (cantLeidos < 82)
-        		if (cantLeidos % 9 == 0) {
+        		if (col == tamanio - 1) {
         			fila++;
         			col = 0;
         		}
@@ -80,47 +74,133 @@ public class Juego {
 	//	}
 	}
 	
-	public boolean cumpleConLasReglas(Celda c) {
-		boolean toReturn=false;
-//		
-//		if(cumplenFilas() && cumplenColumnas() && cumplenCuadrantes()) {
-//			toReturn=true;
-//		}
-		return toReturn;
-	}
-	
-	public boolean cumplenFilas() {
-		boolean toReturn= true;
-		for(int i=0; i<10; i++) { //cantidad de iconos
-			for(int j=0; j<tamanio ; j++) { //cantidad de filas
-				//if(!revisaFila(i, j)) {
-					toReturn=false;
-					return toReturn;
-				}
-			}
-		//}
-		return toReturn;
-	}
-	
-
-	/*
-	public Juego() {
-		this.cantFilas = 9;
-		tablero = new Celda[this.cantFilas][this.cantFilas];
+	public boolean cumpleReglas(Celda c) {
 		
-		for (int i =0; i<cantFilas; i++) {
-			for (int j =0; j<cantFilas; j++) {
-				Random rand = new Random();
-				int value = rand.nextInt(2);
-				tablero[i][j] = new Celda();
-				//De acuerdo a value decidir si asignar un valor o no
-				if (value == 0){
-					// elijo aleatoriamente un valor entre 0 (incluido) y cantElementos (excluido)
-					int valor = rand.nextInt(tablero[i][j].getCantElementos());
-					tablero[i][j].setValor(valor);	
+		return (cumpleFila(c) && cumpleColumna(c) && cumpleCuadrante(c));
+	}
+	
+	public boolean cumpleFila(Celda c) {
+		boolean toReturn= true;
+		int fila= c.getFila();
+		int columna= c.getColumna();
+		
+		for(int i=0; i<tamanio && toReturn==true; i++) { 
+			if(i!=columna) {
+				if (this.tablero[c.getFila()][i] != null) {
+				
+					if(tablero[fila][i].getValor()== c.getValor()) {
+						toReturn=false;
+					}
 				}
 			}
+			
+		}
+		return toReturn;
+	}
+	
+	public boolean cumpleColumna(Celda c) {
+		boolean toReturn= true;
+		int fila= c.getFila();
+		int columna= c.getColumna();
+		
+		for(int i=0; i<tamanio ; i++) { 
+			if(i!=fila) {
+				if (this.tablero[i][c.getColumna()] != null) {
+					
+					if(tablero[i][columna].getValor()== c.getValor()) {
+						toReturn=false;
+					}
+				}
+				
+			}
+			
+		}
+		return toReturn;
+	}
+	
+	public boolean cumpleCuadrante(Celda c) {
+		Boolean toReturn=true;
+		int cuadrante= c.getCuadrante();
+		int fila, columna, corteFila, corteColumna; //variables que se usaran para recorrer el tablero
+		fila=0;
+		columna=0;
+		corteFila=0;
+		corteColumna=0;
+		
+		if(cuadrante==0) {
+			fila=0; columna=0;
+		}
+		if(cuadrante==1) {
+			fila=0; columna=3;
+		}
+		if(cuadrante==2) {
+			fila=0; columna=6;
+		}
+		if(cuadrante==3) {
+			fila=3; columna=0;
+		}
+		if(cuadrante==4) {
+			fila=3; columna=3;
+		}
+		if(cuadrante==5) {
+			fila=3; columna=6;
+		}
+		if(cuadrante==6) {
+			fila=6; columna=0;
+		}
+		if(cuadrante==7) {
+			fila=6; columna=3;
+		}
+		if(cuadrante==8) {
+			fila=6; columna=6;
 		}
 		
+		corteFila=fila+3;
+		corteColumna=columna+3;
+
+		
+		while(fila<corteFila && toReturn!=false) {
+			while(columna<corteColumna && toReturn!=false) {
+				if (tablero[fila][columna] != null) {
+					if(tablero[fila][columna].getFila()!=c.getFila() && tablero[fila][columna].getColumna()!=c.getColumna()) {
+						if(tablero[fila][columna].getValor()==c.getValor()) {
+							toReturn=false;
+						}
+					}
+				}
+				columna++;
+			}
+			fila++;
+		}
+		
+		return toReturn;
 	}
-	*/}
+	
+	public void eliminarCeldasParaComenzar() {
+		int fila = 0;
+		Random rndCol = new Random();
+		int rnd1,rnd2,rnd3,rnd4;
+		while (fila < tamanio) {
+			rnd1 = rndCol.nextInt(9);
+			rnd2 = rndCol.nextInt(9);
+			rnd3 = rndCol.nextInt(9);
+			rnd4 = rndCol.nextInt(9);
+			
+			while ((rnd1 == rnd2) || (rnd1 == rnd3) || (rnd1 == rnd4) || (rnd2 == rnd3) || (rnd2 == rnd4) || (rnd3 == rnd4)) {
+				rnd1 = rndCol.nextInt(9);
+				rnd2 = rndCol.nextInt(9);
+				rnd3 = rndCol.nextInt(9);
+				rnd4 = rndCol.nextInt(9);
+			}
+				
+			contador -= 4;
+			tablero[fila][rnd1] = null;
+			tablero[fila][rnd2] = null;
+			tablero[fila][rnd3] = null;
+			tablero[fila][rnd4] = null;
+			
+			fila++;
+		}
+	}
+
+}

@@ -4,10 +4,9 @@ public class Celda {
 
 	private Integer valor;
 	private EntidadGrafica entidadGrafica;
-	private int fila, columna;
+	private int fila, columna, cuadrante;
 	
 
-  
 	public Celda() {
 		
 		this.valor = null;
@@ -40,6 +39,57 @@ public class Celda {
 		return this.valor;
 	}
 	
+	public int getCuadrante() {
+		return cuadrante;
+	}
+	
+	public void setCuadrante(int fila, int columna) {
+		if(fila<3) {
+			if(columna<3) {
+				cuadrante=0;
+			}
+			else { 
+				if(columna<6) {
+					cuadrante=1;
+				}
+				else{
+					cuadrante=2;
+				}
+			}
+		}else {
+			if(fila<6) {
+				if(columna<3) {
+					cuadrante=3;
+				}
+				else { 
+					if(columna<6) {
+						cuadrante=4;
+					}
+					else{
+						cuadrante=5;
+					}
+				}
+			}
+			
+			else {
+				if(fila<9) {
+					if(columna<3) {
+						cuadrante=6;
+					}
+					else { 
+						if(columna<6) {
+							cuadrante=7;
+						}
+						else{
+							cuadrante=8;
+						}
+					}
+				}
+			}
+		}
+		
+	}
+
 	public void setValor(Integer valor) {
 		if (valor!=null && valor < this.getCantElementos()) {
 			this.valor = valor;
