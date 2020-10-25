@@ -7,13 +7,13 @@ public class Celda {
 	private int fila, columna, cuadrante;
 	
 
-	public Celda() {
+	public Celda() {  //constructor Celda
 		
 		this.valor = null;
 		this.entidadGrafica = new EntidadGrafica();
 	}
 	
-	public void actualizar() {
+	public void actualizar() {    //actualiza entidad grafica de la Celda
 		if (this.valor != null && this.valor + 1 < this.getCantElementos()) {
 			this.valor++;
 		}else {
@@ -43,7 +43,7 @@ public class Celda {
 		return cuadrante;
 	}
 	
-	public void setCuadrante(int fila, int columna) {
+	public void setCuadrante(int fila, int columna) {  // Segun fila y columna reconoce en que cuadrante esta
 		if(fila<3) {
 			if(columna<3) {
 				cuadrante=0;
@@ -90,7 +90,7 @@ public class Celda {
 		
 	}
 
-	public void setValor(Integer valor) {
+	public void setValor(Integer valor) {    // seteamos valor de entidad
 		if (valor!=null && valor < this.getCantElementos()) {
 			this.valor = valor;
 			this.entidadGrafica.actualizar(this.valor);

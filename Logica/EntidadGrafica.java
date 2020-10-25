@@ -7,15 +7,15 @@ public class EntidadGrafica {
 	private ImageIcon grafico;
 	private String[] imagenes;
 	
-	public EntidadGrafica() {
+	public EntidadGrafica() {      //arreglo que contiene las direcciones de las imagenes utilizadas en la Gui del juego
 		this.grafico = new ImageIcon();
-		this.imagenes = new String[]{"/Imagenes/amarillo.png", "/Imagenes/azul.png",
-				 "/Imagenes/celeste.png", "/Imagenes/marron.png","/Imagenes/naranja.png",
-				 "/Imagenes/rojo.png", "/Imagenes/rosa.png", "/Imagenes/verde.png",
-				"/Imagenes/violeta.png"};
+		this.imagenes = new String[]{"/ImagenesJuego/amarillo.png", "/ImagenesJuego/azul.png",
+				 "/ImagenesJuego/celeste.png", "/ImagenesJuego/marron.png","/ImagenesJuego/naranja.png",
+				 "/ImagenesJuego/rojo.png", "/ImagenesJuego/rosa.png", "/ImagenesJuego/verde.png",
+				"/ImagenesJuego/violeta.png"};
 	}
 	
-	public void actualizar(int indice) {
+	public void actualizar(int indice) {    //actualizamos imagen
 		if (indice < this.imagenes.length) {
 			ImageIcon imageIcon = new ImageIcon(this.getClass().getResource(this.imagenes[indice]));
 			
@@ -35,9 +35,4 @@ public class EntidadGrafica {
 		return this.imagenes;
 	}
 	
-	/*
-	public void setImagenes(String[] imagenes) {
-		this.imagenes = imagenes;
-	}
-	*/
 }
