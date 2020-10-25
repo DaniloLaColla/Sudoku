@@ -81,11 +81,12 @@ public class Juego {
 		return toReturn;
 	}
 
-	private boolean archivoCumpleFormato(File f) {  //si cumple con el formato de 9 lineas de enteros (del 0 al 8) separadas por espacios
+	private boolean archivoCumpleFormato(File f) {  //si cumple con el formato de 9 lineas de 9 enteros (del 0 al 8) separadas por espacios
 		boolean toReturn = true;
 		String linea = "";
 		String[] auxiliar;  
-		int numero;
+		int numero, contadorFilas;
+		contadorFilas=0;
 		try {
 			String rutaArchivo =f.getPath();
 			InputStream in = Juego.class.getClassLoader().getResourceAsStream(rutaArchivo);
@@ -93,17 +94,23 @@ public class Juego {
 			BufferedReader bf = new BufferedReader(isr);
 
 			while((linea = bf.readLine())!=null && toReturn) {
-				auxiliar = linea.split(" ");
-				if(auxiliar.length==tamanio) {
-					for(int i=0; i<auxiliar.length && toReturn; i++) {
-						numero = Integer.parseInt(auxiliar[i]);
-						if(numero<0 || numero>8)
-							toReturn = false;
-					}
+				contadorFilas++;
+				if(contadorFilas==10) {
+					toReturn=false;
 				}
-				else
-					toReturn = false;
-			}
+				else {
+					auxiliar = linea.split(" ");
+					if(auxiliar.length==tamanio) {
+						for(int i=0; i<auxiliar.length && toReturn; i++) {
+							numero = Integer.parseInt(auxiliar[i]);
+							if(numero<0 || numero>8)
+								toReturn = false;
+						}
+					}
+					else
+						toReturn = false;
+				}
+			  }
 			bf.close();
 			
 		}
@@ -249,29 +256,29 @@ public class Juego {
 	}
 	
 	public void eliminarCeldas() {  //elimina celdas para comenzar
-		int fila = 0;
-		Random rndCol = new Random();
+		int columna = 0;
+		Random rndFila = new Random();
 		int rnd1,rnd2,rnd3,rnd4;
-		while (fila < tamanio) {
-			rnd1 = rndCol.nextInt(9);
-			rnd2 = rndCol.nextInt(9);
-			rnd3 = rndCol.nextInt(9);
-			rnd4 = rndCol.nextInt(9);
+		while (columna < tamanio) {
+			rnd1 = rndFila.nextInt(9);
+			rnd2 = rndFila.nextInt(9);
+			rnd3 = rndFila.nextInt(9);
+			rnd4 = rndFila.nextInt(9);
 			
 			while ((rnd1 == rnd2) || (rnd1 == rnd3) || (rnd1 == rnd4) || (rnd2 == rnd3) || (rnd2 == rnd4) || (rnd3 == rnd4)) {
-				rnd1 = rndCol.nextInt(9);
-				rnd2 = rndCol.nextInt(9);
-				rnd3 = rndCol.nextInt(9);
-				rnd4 = rndCol.nextInt(9);
+				rnd1 = rndFila.nextInt(9);
+				rnd2 = rndFila.nextInt(9);
+				rnd3 = rndFila.nextInt(9);
+				rnd4 = rndFila.nextInt(9);
 			}
 				
 			contador -= 4;
-			tablero[fila][rnd1] = null;
-			tablero[fila][rnd2] = null;
-			tablero[fila][rnd3] = null;
-			tablero[fila][rnd4] = null;
+			tablero[rnd1][columna] = null;
+			tablero[rnd2][columna] = null;
+			tablero[rnd3][columna] = null;
+			tablero[rnd4][columna] = null;
 			
-			fila++;
+			columna++;
 		}
 	}
 
