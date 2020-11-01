@@ -28,7 +28,7 @@ public class Juego {
 		}
 		
 	}
-	
+
 
 	private boolean esArchivoValido(File f) throws FileNotFoundException {    //verifica que el archivo sea valido, y de ser asi, genera la matriz de celdas
 		boolean toReturn=true;
@@ -148,7 +148,7 @@ public class Juego {
 	
 	public boolean cumpleReglas(Celda c) { //si determinada celda esta en una posicion valida momentaneamente
 		boolean toReturn=false;
-		if(!noCumpleCuadrante(c)) {
+		if(!estaEnCuadrante(c)) {
 			if(cumpleFila(c)) {
 				if(cumpleColumna(c)) {
 					toReturn=true;
@@ -198,61 +198,77 @@ public class Juego {
 		return toReturn;
 	}
 	
-	public boolean noCumpleCuadrante(Celda c) { 
-		Boolean toReturn=false;
-		int cuadrante= c.getCuadrante();
-		int fila, columna, corteFila, corteColumna; //variables que se usaran para recorrer el tablero
-		fila=0;
-		columna=0;
-		corteFila=0;
-		corteColumna=0;
+	private boolean seRepite(int fila, int col, Celda c) {
+		boolean seRepite = false;
+		if (tablero[fila][col] != null)
+			if (fila != c.getFila() || col != c.getColumna())
+				if (tablero[fila][col].getValor() == c.getValor()) 
+					seRepite = true;
+		return seRepite;
+	}
+	
+	// En base al numero de fila y columna que la celda pasada como parametro contenga,
+	// realiza el recorrido del cuadrante al que la celda pertenezca para ver si el valor 
+	// de la celda ya estaba.
+	public boolean estaEnCuadrante(Celda c) {
+		boolean toReturn = false;
+		int fila = c.getFila();
+		int col = c.getColumna();
 		
-		if(cuadrante==0) {
-			fila=0; columna=0;
+		if ((fila == 0) | (fila == 3) | (fila == 6)) {
+			if ((col == 0) | (col == 3) | (col == 6)) {
+				for (int i = fila; i <= (fila+2) && toReturn == false; i++) 
+					for (int j = col; j <= (col+2) && toReturn == false; j++) 
+						toReturn = seRepite(i, j, c);
+			}
+			if ((col == 1) || (col == 4) || (col == 7)) {
+				for (int i = fila; i <= (fila+2) && toReturn == false; i++) 
+					for (int j = col-1; j <= (col+1) && toReturn == false; j++) 
+						toReturn = seRepite(i, j, c);		
+			}
+			if ((col == 2) || (col == 5) || (col == 8)) {
+				for (int i = fila; i <= fila+2 && toReturn == false; i++) 
+					for (int j = col-2; j <= col && toReturn == false; j++) 
+						toReturn = seRepite(i, j, c);			
+				}
 		}
-		if(cuadrante==1) {
-			fila=0; columna=3;
-		}
-		if(cuadrante==2) {                    //indicamos desde donde recorremos para encontrar coincidencias 
-			fila=0; columna=6;
-		}
-		if(cuadrante==3) {
-			fila=3; columna=0;
-		}
-		if(cuadrante==4) {
-			fila=3; columna=3;
-		}
-		if(cuadrante==5) {
-			fila=3; columna=6;
-		}
-		if(cuadrante==6) {
-			fila=6; columna=0;
-		}
-		if(cuadrante==7) {
-			fila=6; columna=3;
-		}
-		if(cuadrante==8) {
-			fila=6; columna=6;
-		}
-		
-		corteFila=fila+3;
-		corteColumna=columna+3;
-
-		while(fila<corteFila && toReturn==false) {
-			while(columna<corteColumna && toReturn==false) {
-				if (tablero[fila][columna] != null) {
-					if(fila!=c.getFila() || columna!=c.getColumna()) {
-						if(tablero[fila][columna].getValor()==c.getValor()) {
-							toReturn=true;
-						}
+		else
+			if ((fila == 1) || (fila == 4) || (fila == 7)) {
+				if ((col == 0) || (col == 3) || (col == 6)) {
+					for (int i = fila-1; i <= fila+1 && toReturn == false; i++)
+						for (int j = col; j <= col+2 && toReturn == false; j++)
+							toReturn = seRepite(i, j, c);			
+				}				
+				if ((col == 1) || (col == 4) || (col == 7)) {
+					for (int i = fila-1; i <= fila+1 && toReturn == false; i++) 
+						for (int j = col-1; j <= col+1 && toReturn == false; j++) 
+							toReturn = seRepite(i, j, c);
+				}
+				if ((col == 2) || (col == 5) || (col == 8)) {
+					for (int i = fila-1; i <= fila+1 && toReturn == false; i++)
+						for (int j = col-2; j <= col && toReturn == false; j++)
+							toReturn = seRepite(i, j, c);
+				}			
+			}
+			else
+				if ((fila == 2) || (fila == 5) || (fila == 8)) {
+					if ((col == 0) || (col == 3) || (col == 6)) {
+						for (int i = fila-2; i <= fila && toReturn == false; i++) 
+							for (int j = col; j <= col+2 && toReturn == false; j++) 
+								toReturn = seRepite(i, j, c);		
+					}
+					if ((col == 1) || (col == 4) || (col == 7)) {
+						for (int i = fila-2; i <= fila && toReturn == false; i++) 
+							for (int j = col-1; j <= col+1 && toReturn == false; j++) 
+								toReturn = seRepite(i, j, c);
+					}				
+					if ((col == 2) || (col == 5) || (col == 8)) {
+						for (int i = fila-2; i <= fila && toReturn == false; i++) 
+							for (int j = col-2; j <= col && toReturn == false; j++) 
+								toReturn = seRepite(i, j, c);
 					}
 				}
-				columna++;
-			}
-			fila++;
-		}
-	
-		return toReturn;
+			return toReturn;	
 	}
 	
 	public void eliminarCeldas() {  //elimina celdas para comenzar

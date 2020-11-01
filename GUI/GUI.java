@@ -1,35 +1,48 @@
 package GUI;
 
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import Logica.Celda;
+
+import Logica.EntidadGraficaReloj;
 import Logica.Juego;
+import Logica.NumerosReloj;
 
 import java.awt.GridLayout;
 import javax.swing.JOptionPane;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+
 import java.awt.BorderLayout;
 
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
 
 	@SuppressWarnings("unused")
-	private JPanel panelPrincipal, panelTablero, panelSecundario;
+	private JPanel panelPrincipal, panelTablero, panelSecundario, panelTiempo, panelTiempoGeneral;
 	private Juego juego;
 	private JButton tableroBotones[][];
 	private JPanel cuadrantes[];
 	private JPanel panelVerificacion;
 	private JButton botonGanar;
-	private Cronometro cronometro;
+	
+	private EntidadGraficaReloj izqSegundos, derSegundos, izqMinutos, derMinutos;
+	private Timer timer;
+	private NumerosReloj minutos, segundos;
+	private JLabel [] reloj;
 
 	
 	/**
@@ -53,13 +66,9 @@ public class GUI extends JFrame {
 	
 	public GUI() {  //inicializacion de GUI
 		
-		String archivo = "/Archivo/generadorSudoku.txt"; //seleccion de archivo
-		try {
-			juego = new Juego(archivo);
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
+		inicializarJuego();
+		
+		
 		
 		if(juego.getHabilitarGUI()) { //si el archivo es correcto
 			
@@ -71,17 +80,104 @@ public class GUI extends JFrame {
 		
 			juego.eliminarCeldas(); //Se eliminan celdas al azar
 			
-			inicializarBotones(); 
+			inicializarBotones();
+			
+			iniciarTiempo();
 		}
 		else {		//si el archivo no es valido mostramos mensaje de error y cortamos ejecucion
 			
 			JOptionPane.showMessageDialog(null,"Archivo no valido","Estamos en problemas",JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		
-		
+			
 		
 	}
+	
+	/**
+	 * inicializa el reloj que lleva el tiempo transcurrido de juego.
+	 */
+	private void iniciarTiempo() {		
+		izqMinutos = new EntidadGraficaReloj();
+		izqSegundos = new EntidadGraficaReloj();
+		derMinutos = new EntidadGraficaReloj();
+		derSegundos = new EntidadGraficaReloj();
+		
+		minutos = new NumerosReloj(izqMinutos, derMinutos);
+		segundos = new NumerosReloj(izqSegundos, derSegundos);
+		
+		reloj = new JLabel[5];
+		
+		minutos.getIzq().actualizar(0);
+		minutos.getDer().actualizar(0);	
+		segundos.getIzq().actualizar(0);
+		segundos.getDer().actualizar(0);
+		
+		
+		reloj[0] = new JLabel(minutos.getIzq().getGrafico());
+		reloj[1] = new JLabel(minutos.getDer().getGrafico());
+		reloj[2] = new JLabel(new ImageIcon(getClass().getResource("/ImagenesCronometro/dosPuntos.png")));
+		reloj[3] = new JLabel(segundos.getIzq().getGrafico());
+		reloj[4] = new JLabel(segundos.getDer().getGrafico());
+		
+		for (int i = 0; i < reloj.length; i++)
+			panelTiempo.add(reloj[i]);
+		
+		timer = new Timer();
+		
+		TimerTask tarea = new TimerTask() {		
+				public void run() {
+					
+					if (segundos.getDer().getValor() < 9) {
+						segundos.getDer().setValor(segundos.getDer().getValor() + 1);
+						segundos.getDer().actualizar(segundos.getDer().getValor());		
+					}
+					else {
+						segundos.getDer().setValor(0);
+						segundos.getDer().actualizar(segundos.getDer().getValor());
+						segundos.getIzq().setValor(segundos.getIzq().getValor() + 1);
+						segundos.getIzq().actualizar(segundos.getIzq().getValor());
+					}
+
+					if (segundos.getIzq().getValor() == 6) {
+						minutos.getDer().setValor(minutos.getDer().getValor() + 1);
+						minutos.getDer().actualizar(minutos.getDer().getValor());
+						segundos.getIzq().setValor(0);
+						segundos.getIzq().actualizar(segundos.getIzq().getValor());
+					}
+					
+					if (minutos.getDer().getValor() == 9) {
+						if (minutos.getIzq().getValor() != 9) {
+							minutos.getDer().setValor(0);
+							minutos.getDer().actualizar(minutos.getDer().getValor());
+							minutos.getIzq().setValor(minutos.getIzq().getValor() + 1);
+							minutos.getIzq().actualizar(minutos.getIzq().getValor());
+						}
+					}
+					
+					if (minutos.getIzq().getValor() == 9 && minutos.getDer().getValor() == 9) {
+						JOptionPane.showMessageDialog(null, "Ha excedido el tiempo neto de juego ","¡HAS PERDIDO!",2);
+						System.exit(0);
+						
+					}
+					repaint();
+				}		
+		};
+		timer.schedule(tarea, 0 , 1000);
+	}
+
+
+		private void inicializarJuego() {
+		// TODO Auto-generated method stub
+			String archivo = "/Archivo/generadorSudoku.txt"; //seleccion de archivo
+			try {
+				juego = new Juego(archivo);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+
+	}
+
 		private void inicializarFrame() {//Inicializacion JFrame
 			setTitle("Sudok-us");
 			setIconImage(new ImageIcon(getClass().getResource("/ImagenesJuego/rojo.png")).getImage() );
@@ -103,17 +199,25 @@ public class GUI extends JFrame {
 			panelTablero.setLayout(new GridLayout(3, 3, 0, 0));
 			panelTablero.setSize(565, 565);
 			
-			
-			
 			JPanel panelSecundario = new JPanel();
 			panelPrincipal.add(panelSecundario, BorderLayout.EAST);
-			
-			
 			panelSecundario.setLayout(new BorderLayout(0, 0));
+
+			panelTiempoGeneral = new JPanel();
+			panelTiempoGeneral.setLayout(new BorderLayout(0, 0));
 			
-			cronometro= new Cronometro();
+			panelSecundario.add(panelTiempoGeneral, BorderLayout.NORTH);
 			
-			panelSecundario.add(cronometro, BorderLayout.NORTH);
+			panelTiempo = new JPanel();
+			panelTiempo.setLayout(new FlowLayout());
+			
+			panelTiempoGeneral.add(panelTiempo, BorderLayout.SOUTH);
+			
+			JLabel etiquetaTiempo = new JLabel("Tiempo de juego:");
+			panelTiempoGeneral.add(etiquetaTiempo, BorderLayout.NORTH);
+			etiquetaTiempo.setBounds(110, 110, 110, 110);
+			etiquetaTiempo.setFont(new Font("Font.PLAIN", 5, 26));
+			
 			
 			panelVerificacion = new JPanel();
 			panelSecundario.add(panelVerificacion, BorderLayout.SOUTH);
@@ -124,7 +228,7 @@ public class GUI extends JFrame {
 			botonGanar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(juego.ganar()) {
-						JOptionPane.showMessageDialog(GUI.this, "GANASTE "+ cronometro.getTime());
+						JOptionPane.showMessageDialog(GUI.this, "Haz Ganado, tu tiempo: "+minutos.getIzq().getValor()+""+minutos.getDer().getValor()+":"+segundos.getIzq().getValor()+""+segundos.getDer().getValor());
 						System.exit(0);
 						
 					}else {
@@ -223,7 +327,7 @@ public class GUI extends JFrame {
 							celda.setColumna(columna);
 							celda.setFila(fila);
 							celda.setCuadrante(fila, columna);
-							celda.setValor(1);							
+							celda.setValor(0);							
 							juego.setCelda(fila, columna, celda);  
 							actualizarBoton(tableroBotones[celda.getFila()][celda.getColumna()], celda.getFila(), celda.getColumna(), celda);  //actualizamos botones
 						}
