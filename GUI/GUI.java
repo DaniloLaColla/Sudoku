@@ -16,6 +16,7 @@ import Logica.Juego;
 import Logica.NumerosReloj;
 
 import java.awt.GridLayout;
+
 import javax.swing.JOptionPane;
 
 import java.io.IOException;
@@ -32,12 +33,13 @@ import java.awt.BorderLayout;
 public class GUI extends JFrame {
 
 	@SuppressWarnings("unused")
-	private JPanel panelPrincipal, panelTablero, panelSecundario, panelTiempo, panelTiempoGeneral;
+	private JPanel panelPrincipal, panelTablero, panelSecundario, panelTiempo, panelTiempoGeneral, panelBanner;
 	private Juego juego;
 	private JButton tableroBotones[][];
 	private JPanel cuadrantes[];
 	private JPanel panelVerificacion;
 	private JButton botonGanar;
+	private JLabel banner;
 	
 	private EntidadGraficaReloj izqSegundos, derSegundos, izqMinutos, derMinutos;
 	private Timer timer;
@@ -236,6 +238,16 @@ public class GUI extends JFrame {
 					}
 				}
 			});
+			
+			JPanel panelBanner = new JPanel();
+	
+			banner = new JLabel();			
+			ImageIcon icon = new ImageIcon(getClass().getResource("/ImagenesJuego/banner.png")); 
+			banner.setIcon(icon);
+			
+			panelBanner.add(banner);
+			panelSecundario.add(panelBanner, BorderLayout.CENTER);
+			
 			
 			
 			tableroBotones = new JButton[juego.getCantFilas()][juego.getCantFilas()];  //inicializacion de tableros y cuadrantes
